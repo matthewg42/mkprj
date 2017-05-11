@@ -5,7 +5,7 @@
 * Install the Arduino IDE 1.6.6 or later
 ** Windows & Mac users may find a download link here: https://www.arduino.cc/en/Main/Software
 ** Major Linux distros carry it in their software repositories, or the link above may be used
-* In the Arduino IDE, install ESP8266 tools from Tools -> Sketch -> Manage Libraries
+* In the Arduino IDE, install ESP8266 tools from Sketch -> Include Library -> Manage Libraries
 
 ## Building Using the Arduino IDE
 
