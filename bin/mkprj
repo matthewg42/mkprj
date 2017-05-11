@@ -1,0 +1,113 @@
+#!/bin/bash
+
+THISSCRIPT=${0##*/}
+THISSCRIPT_FULL="$0"
+DBLEV_S=${DBLEV_S:-0}
+MKPRJ_TEMPLATE_DIR="${MKPRJ_TEMPLATE_DIR:-$HOME/project/mkprj/templates}"
+
+usage () {
+    cat <<EOD
+Usage:
+    ${0##*/} -l             : list project templates
+    ${0##*/} -L             : list project templates and content
+    ${0##*/} template name  : make a project called "name" for specified template
+
+EOD
+    exit ${1:-0}
+}
+
+main () {
+    set -- `getopt vhD:lL $@`
+    if [ $? -ne 0 ]; then
+      usage 2
+    fi
+
+    while [ $# -gt 0 ]; do
+      case $1 in
+        -D)
+            DBLEV_S=$2
+            shift 2
+            ;;
+        -l)
+            list_templates
+            shift
+            ;;
+        -L)
+            list_templates -v
+            shift
+            ;;
+        -h)
+            usage 0
+            shift
+            ;;
+        -v)
+            echo "$PROGNAME; version $VERSION"
+            echo "$AUTHOR"
+            shift
+            ;;
+        --)
+        shift
+        break
+        ;;
+      esac
+    done
+
+    db_out 3 "command line parsed, parameters now: $@"
+
+    if [ $# -ne 2 ]; then
+        usage 2
+    fi
+
+    make_project "$@"
+
+}
+
+list_templates () {
+    cd "$MKPRJ_TEMPLATE_DIR" || erex 4 "template directory not found"
+    case "$1" in
+    -v)
+        for f in *; do 
+            find "$f" -type f
+            echo ""
+        done
+        ;;
+    *)
+        ls
+        ;;
+    esac
+    exit 0
+}
+
+make_project () {
+    [ -e "$MKPRJ_TEMPLATE_DIR/$1" ] || erex 6 "ERROR: template \"$1\" not known"
+    [ -e "$2" ] && erex 5 "ERROR - $2 already exists"
+    cp -Rp "$MKPRJ_TEMPLATE_DIR/$1" "$2"
+}
+
+erex () {
+    l="$1"
+    shift
+    echo "$@" 1>&2
+    exit ${l:-1}
+}
+
+db_out () {
+  meslev="${1:-1}"
+  shift
+  message="$@"
+
+  if [ $meslev -le ${DBLEV_S:-0} ]; then
+    if [ $meslev -lt 0 ]; then
+      mestyp="$THISSCRIPT ERROR[$meslev]:"
+    elif [ $meslev -eq 0 ]; then
+      mestyp="$THISSCRIPT WARNING:"
+    else
+      mestyp="$THISSCRIPT DEBUG[$meslev]:"
+    fi
+
+    echo "$mestyp $message" 1>&2
+  fi
+}
+
+main "$@"
+
