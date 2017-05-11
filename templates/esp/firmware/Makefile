@@ -1,6 +1,4 @@
-# Add flags for debugging and anything else we might have in our code...
-CPPFLAGS += -DDEBUG
-
+BUILD_EXTRA_FLAGS += -DDEBUG
 BOARD = nodemcu
 
 include ../esp.mk
