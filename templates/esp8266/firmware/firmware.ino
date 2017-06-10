@@ -7,7 +7,7 @@ void setup()
     delay(100);
     DBLN(F("S:setup"));
 
-    DBLN(F("E:setup:"));
+    DBLN(F("E:setup"));
 }
 
 void loop()

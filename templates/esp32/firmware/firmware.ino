@@ -1,12 +1,13 @@
 #include <Arduino.h>
+#include <MutilaDebug.h>
 
 void setup()
 {
     Serial.begin(115200);
     delay(100);
-    Serial.println(F("S:setup"));
+    DBLN(F("S:setup"));
 
-    Serial.println(F("E:setup:"));
+    DBLN(F("E:setup"));
 }
 
 void loop()
