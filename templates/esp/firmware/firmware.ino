@@ -1,29 +1,16 @@
 #include <Arduino.h>
-
-#define PIN D5
-
-bool ledon = true;
-unsigned long nxt = 0;
-
-void toggle()
-{
-    if (millis() > nxt) {
-        ledon = ! ledon;
-        Serial.println(ledon);
-        digitalWrite(PIN, ledon);
-        nxt = millis() + 500;
-    }
-}
+#include <MutilaDebug.h>
 
 void setup()
 {
     Serial.begin(115200);
-    pinMode(PIN, OUTPUT);
-    Serial.println(F("setup:E"));
+    delay(100);
+    DBLN(F("S:setup"));
+
+    DBLN(F("E:setup:"));
 }
 
 void loop()
 {
-    toggle();
 }
 
