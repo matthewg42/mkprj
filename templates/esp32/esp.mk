@@ -9,6 +9,10 @@ ifndef ESP_ROOT
 	ESP_ROOT := $(shell grep -o "sketchbook.path=.*" $(HOME)/.arduino/preferences.txt 2>/dev/null | cut -f2- -d=)/hardware/espressif/esp32
 endif
 
+ifndef ARDUINO_LIBS
+	ARDUINO_LIBS := $(shell grep -o "sketchbook.path=.*" $(HOME)/.arduino/preferences.txt 2>/dev/null | cut -f2- -d=)/libraries
+endif
+
 include $(ESP_MAKEFILE)
 
 
