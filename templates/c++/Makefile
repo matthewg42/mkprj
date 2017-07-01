@@ -1,9 +1,10 @@
 
+BUILD_DIR = build
 CFLAGS += -DDEBUG
 LFLAGS += 
 SRC = $(wildcard *.cpp)
 HDR = $(wildcard *.hpp) $(wildcard *.h)
-OBJ = $(subst .cpp,.o,$(SRC))
+OBJ = $(addprefix $(BUILD_DIR)/,$(subst .cpp,.o,$(SRC)))
 GCC = g++
 TARGET = test
 
@@ -15,10 +16,11 @@ run: $(TARGET)
 $(TARGET) : $(OBJ)
 	$(GCC) -o $@ $(LFLAGS) $^
 
-%.o : %.cpp
+$(BUILD_DIR)/%.o : %.cpp
 	$(GCC) -c -o $@ $(CFLAGS) $<
 
 clean:
 	rm -f $(OBJ) $(TARGET)
+	rmdir $(BUILD_DIR)
 
 
