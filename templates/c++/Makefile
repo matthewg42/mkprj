@@ -9,11 +9,11 @@ TARGET = test
 
 .PHONY: clean run
 
-$(TARGET) : $(OBJ)
-	$(GCC) -o $@ $(LFLAGS) $<
-
 run: $(TARGET)
 	./$(TARGET)
+
+$(TARGET) : $(OBJ)
+	$(GCC) -o $@ $(LFLAGS) $^
 
 %.o : %.cpp
 	$(GCC) -c -o $@ $(CFLAGS) $<
