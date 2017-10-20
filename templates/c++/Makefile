@@ -21,6 +21,4 @@ $(BUILD_DIR)/%.o : %.cpp
 
 clean:
 	rm -f $(OBJ) $(TARGET)
-	rmdir $(BUILD_DIR)
-
 
