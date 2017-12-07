@@ -81,7 +81,7 @@ list_templates () {
 make_project () {
     [ -e "$MKPRJ_TEMPLATE_DIR/$1" ] || erex 6 "ERROR: template \"$1\" not known"
     [ -e "$2" ] && erex 5 "ERROR - $2 already exists"
-    cp -p "$MKPRJ_TEMPLATE_DIR/$1" "$2"
+    cp -r "$MKPRJ_TEMPLATE_DIR/$1" "$2"
 }
 
 erex () {
