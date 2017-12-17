@@ -82,6 +82,41 @@ make_project () {
     [ -e "$MKPRJ_TEMPLATE_DIR/$1" ] || erex 6 "ERROR: template \"$1\" not known"
     [ -e "$2" ] && erex 5 "ERROR - $2 already exists"
     cp -r "$MKPRJ_TEMPLATE_DIR/$1" "$2"
+    cd "$2" || erex "failed to cd"
+    if [ -r "./.mkprj-replace" ]; then
+        echo "Relacements"
+        local s
+        local r
+        local def
+        local pr
+        for s in $(cat "./.mkprj-replace"); do 
+            case "$s" in
+            "TODO:PROJECT-DIR")
+                def="${2##*/}"
+                ;;
+            *)
+                def=""
+                ;;
+            esac
+
+            if [ -z "$def" ]; then
+                pr="value for $s> "
+            else
+                pr="value for $s [$def]> "
+            fi
+
+            read -p "$pr" r
+
+            if [ -z "$r" ] && [ ! -z "$def" ]; then
+                r="$def"
+            fi
+
+            if [ ! -z "$r" ]; then
+                find . -type f -print0 |xargs -0 sed -i "s/$s/$r/g"
+            fi
+        done
+        rm -f "./.mkprj-replace"
+    fi
 }
 
 erex () {
