@@ -1,0 +1,19 @@
+{
+"name": "TODO:PROJECT-NAME",
+"frameworks": "Arduino",
+"keywords": "TODO:KEYWORDS",
+"description": "TODO:PROJECT-DESC",
+"url": "https://github.com/matthewg42/TODO:PROJECT-DIR/",
+"authors":
+[
+{
+        "name": "Matthew Gates (Mouse)"
+}
+],
+"repository":
+{
+    "type": "git",
+    "url": "https://github.com/matthewg42/TODO:PROJECT-DIR"
+}
+}
+

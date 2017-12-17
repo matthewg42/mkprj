@@ -1,0 +1,15 @@
+archive/*
+*_test
+tmp
+rf
+doc/html
+mkdoc
+*.bak
+*~
+.*~
+.*swp
+**/build-*
+**/*.pyc
+**/*.o
+**/__pycache__
+ReleaseChecklist.md
