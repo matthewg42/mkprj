@@ -7,12 +7,20 @@ BUILD_EXTRA_FLAGS += -DDEBUG
 UPLOAD_SPEED = 921600
 
 # Set for your hardware
-# For NodeMCU (ESP8266):
-BOARD = nodemcu
+# For NodeMCU 0.9 (ESP-12 Module) (e.g. NodeMCU Amica used in CheeseBoard: Cheddar)
+#BOARD = nodemcu
+
+# For NodeMCU 1.0 (ESP-12E Module)
+BOARD = nodemcuv2
 
 # For Node32-S (ESP32):
 #CHIP = esp32
 #BOARD = node32s
+
+# For Wemos Lolin 32
+#UPLOAD_SPEED=115200
+#CHIP = esp32
+#BOARD = lolin32
 
 include ../esp.mk
 
