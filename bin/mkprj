@@ -86,16 +86,17 @@ make_project () {
     if [ -r "./.mkprj-replace" ]; then
         echo "Relacements"
         local s
+        local sd
         local r
         local def
         local pr
-        for s in $(cat "./.mkprj-replace"); do 
+        for sd in $(cat "./.mkprj-replace"); do 
+            s="$(echo "$sd" | cut -d= -f1)"
+            def=""
+            echo "$sd" | grep -q = && def="$(echo "$sd" | cut -d= -f2)"
             case "$s" in
             "TODO:PROJECT-DIR")
                 def="${2##*/}"
-                ;;
-            *)
-                def=""
                 ;;
             esac
 
