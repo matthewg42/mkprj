@@ -2,10 +2,10 @@
 BUILD_DIR = build
 CFLAGS += -DDEBUG -g
 LFLAGS += 
-SRC = $(wildcard *.cpp)
-HDR = $(wildcard *.hpp) $(wildcard *.h)
-OBJ = $(addprefix $(BUILD_DIR)/,$(subst .cpp,.o,$(SRC)))
-GCC = g++
+SRC = $(wildcard *.c)
+HDR = $(wildcard *.h)
+OBJ = $(addprefix $(BUILD_DIR)/,$(subst .c,.o,$(SRC)))
+GCC = gcc
 TARGET = test
 
 .PHONY: clean run
@@ -16,7 +16,7 @@ run: $(TARGET)
 $(TARGET) : $(OBJ)
 	$(GCC) -o $@ $(LFLAGS) $^
 
-$(BUILD_DIR)/%.o : %.cpp
+$(BUILD_DIR)/%.o : %.c
 	$(GCC) -c -o $@ $(CFLAGS) $<
 
 clean:
