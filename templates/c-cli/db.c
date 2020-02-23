@@ -83,7 +83,7 @@ void db(int message_level, const char* fmt, ...)
         va_end(args);
 
         fprintf(
-            _db_stream, 
+            _db_stream,
             "%s %s[%d] %s%s%s: %s",
             timestamp,
             _db_name,

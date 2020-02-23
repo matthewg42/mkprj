@@ -34,14 +34,29 @@ int main(int argc, char** argv)
     int flags, opt;
     while ((opt = getopt(argc, argv, "QFEWIDVh")) != -1) {
         switch (opt) {
-        case 'Q': db_set_level(db_q); break;
-        case 'E': db_set_level(db_e); break;
-        case 'W': db_set_level(db_w); break;
-        case 'I': db_set_level(db_i); break;
-        case 'D': db_inc_level(db_1); break;
-        case 'h': print_usage(EXIT_SUCCESS); break;
-        case 'V': print_version(); break;
-        default:  print_usage(EXIT_FAILURE);
+        case 'Q':
+            db_set_level(db_q);
+            break;
+        case 'E':
+            db_set_level(db_e);
+            break;
+        case 'W':
+            db_set_level(db_w);
+            break;
+        case 'I':
+            db_set_level(db_i);
+            break;
+        case 'D':
+            db_inc_level(db_1);
+            break;
+        case 'h':
+            print_usage(EXIT_SUCCESS);
+            break;
+        case 'V':
+            print_version();
+            break;
+        default:
+            print_usage(EXIT_FAILURE);
         }
     }
     db(db_i, "%s: first param idx=%d '%s'\n", __func__, optind, argv[optind]);

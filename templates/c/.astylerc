@@ -1,0 +1,5 @@
+style=otbs
+      attach-extern-c
+      add-braces
+      indent=spaces
+             convert-tabs
