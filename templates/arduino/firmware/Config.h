@@ -2,5 +2,5 @@
 
 #include <stdint.h>
 
-const uint8_t HEARTBEAT_PIN         = 13;
+const uint8_t HeartbeatPin          = 13;
 

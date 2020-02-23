@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# mkprj (C) 2020 Matthew Gates
+#
+# This software is distributed under the terms of GNU GPL version 3
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+PROGNAME=mkprj
+AUTHOR="Matthew Gates"
+YEAR=2020
+VERSION=0.0.3
 
 THISSCRIPT=${0##*/}
 THISSCRIPT_FULL="$0"
@@ -41,9 +51,9 @@ main () {
             shift
             ;;
         -v)
-            echo "$PROGNAME; version $VERSION"
-            echo "$AUTHOR"
-            shift
+            echo "$PROGNAME version $VERSION"
+            echo "(C) $YEAR, $AUTHOR"
+            exit 0
             ;;
         --)
         shift
@@ -94,9 +104,20 @@ make_project () {
             s="$(echo "$sd" | cut -d= -f1)"
             def=""
             echo "$sd" | grep -q = && def="$(echo "$sd" | cut -d= -f2)"
-            case "$s" in
-            "TODO:PROJECT-DIR")
-                def="${2##*/}"
+
+            # expand some special variables
+            case "$def" in
+            \$date:*)
+                def="$(date "+${def#*:}")"
+                ;;
+            \$username)
+                def="$(whoami)"
+                ;;
+            \$fullname)
+                def="$(grep "^$(whoami):" /etc/passwd | cut -d: -f5)"
+                ;;
+            \$project)
+                def="$2"
                 ;;
             esac
 

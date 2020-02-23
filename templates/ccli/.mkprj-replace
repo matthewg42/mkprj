@@ -1,0 +1,4 @@
+__YEAR__=$date:%Y
+__PROGNAME__=$project
+__AUTHOR__=$username
+__SHORTDESC__

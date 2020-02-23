@@ -1,0 +1,13 @@
+tmp
+*~
+.*~
+.*swp
+.worklog
+log/
+wifi.mk
+**/build-*
+**/*.pyc
+**/*.o
+**/__pycache__
+api_keys.txt
+Makefile.apikeys
