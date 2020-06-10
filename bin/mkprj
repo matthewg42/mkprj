@@ -62,7 +62,7 @@ main () {
       esac
     done
 
-    db_out 3 "command line parsed, parameters now: $@"
+    db 3 "command line parsed, parameters now: $@"
 
     if [ $# -ne 2 ]; then
         usage 2
@@ -104,22 +104,9 @@ make_project () {
             s="$(echo "$sd" | cut -d= -f1)"
             def=""
             echo "$sd" | grep -q = && def="$(echo "$sd" | cut -d= -f2)"
-
-            # expand some special variables
-            case "$def" in
-            \$date:*)
-                def="$(date "+${def#*:}")"
-                ;;
-            \$username)
-                def="$(whoami)"
-                ;;
-            \$fullname)
-                def="$(grep "^$(whoami):" /etc/passwd | cut -d: -f5)"
-                ;;
-            \$project)
-                def="$2"
-                ;;
-            esac
+            if [ ! -z "$def" ]; then
+                def="$(substitutions "$def" "$2")"
+            fi
 
             if [ -z "$def" ]; then
                 pr="value for $s> "
@@ -134,11 +121,71 @@ make_project () {
             fi
 
             if [ ! -z "$r" ]; then
-                find . -type f -print0 |xargs -0 sed -i "s/$s/$r/g"
+                sep="$(get_rep_char "$r $s")"
+                db 3 "sep char for str '$r $s' : $sep"
+                sed_cmd="s${sep}$s${sep}$r${sep}g"
+                db 2 "sed cmd: $sed_cmd"
+                find . -type f -print0 |xargs -0 sed -i "$sed_cmd"
             fi
         done
         rm -f "./.mkprj-replace"
     fi
+
+    if [ -r "./.mkprj-move" ]; then
+        db 1 "moving files..."
+        while read from to; do
+            db 1 "$from -> $to"
+            mv "$from" "$to"
+        done < "./.mkprj-move"
+        rm -f "./.mkprj-move"
+    fi
+}
+
+substitutions () {
+    typeset s="$1"
+    typeset pn="$2"
+    typeset t
+
+    if [[ "$s" == '$date:'* ]]; then
+        s="$(date "+${s:6:$((${#s}-6))}")"
+    fi  
+
+    if [[ "$s" == *'$username'* ]]; then
+        s="${s/\$username/$(whoami)}"
+    fi
+
+    if [[ "$s" == *'$fullname'* ]]; then
+        t="$(grep "^$(whoami):" /etc/passwd | cut -d: -f5)"
+        s="${s/\$fullname/$t}"
+    fi
+
+    if [[ "$s" == *'$projectdir'* ]]; then
+        s="${s/\$projectdir/$(realpath .)}"
+    fi
+
+    if [[ "$s" == *'$project'* ]]; then
+        s="${s/\$project/$pn}"
+    fi
+
+    if [[ "$s" == *'$PROJECT'* ]]; then
+        t="$(echo "$pn" | tr 'a-z' 'A-Z')"
+        s="${s/\$PROJECT/$t}"
+    fi
+
+    echo "$s"
+}
+
+get_rep_char () {
+    typeset c
+    for c in / \| \# @ _ \~; do
+        echo "$1" | fgrep -q "$c" > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            echo "$c"
+            return 0
+        fi
+    done
+    echo '\/'
+    return 1
 }
 
 erex () {
@@ -148,7 +195,7 @@ erex () {
     exit ${l:-1}
 }
 
-db_out () {
+db () {
   meslev="${1:-1}"
   shift
   message="$@"
