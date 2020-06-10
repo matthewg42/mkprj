@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import unittest
+
+class Test__TEST_NAME_CAMEL__(unittest.TestCase):
+
+    def test___test_name_lc__(self):
+        self.assertTrue(True)
+
+if __name__ == '__main__':
+    unittest.main()
+

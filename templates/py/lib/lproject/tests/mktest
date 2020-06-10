@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+from stat import *
+import os
+from __PY_LIB_NAME__ import log, init_log
+
+TEMPLATE = """#!/usr/bin/env python3
+
+import unittest
+from __PY_LIB_NAME__ import log, init_log
+
+
+class Test__CAMEL__(unittest.TestCase):
+    def test___SNAKE__(self):
+        self.assertTrue(True)
+
+if __name__ == "__main__":
+    import os
+    import logging
+    init_log(logging.DEBUG if "__PROJECT_NAME_UPPER___DEBUG" in os.environ else logging.INFO)
+    unittest.main()
+
+"""
+
+global args
+
+
+def main():
+    name = " ".join(args.name)
+    camel = camel_case(name)
+    snake = snake_case(name)
+    log.debug("camel case name   %r" % camel)
+    log.debug("snake case name   %r" % snake)
+
+    fn = "test_%s.py" % snake
+    log.info("creating %r" % fn)
+    if not args.force and os.path.exists(fn):
+        log.warning("%s already exists. Use --force option to over-write")
+        exit(1)
+
+    content = TEMPLATE.replace("__CAMEL__", camel).replace("__SNAKE__", snake)
+
+    try:
+        with open(fn, "w") as f:
+            f.write(content)
+        os.chmod(
+            fn, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
+        )
+    except Exception as e:
+        log.error(str(e))
+
+
+def camel_case(s):
+    return s.title().replace(" ", "")
+
+
+def snake_case(s):
+    return s.lower().replace(" ", "_")
+
+
+if __name__ == "__main__":
+    import argparse
+    import logging
+
+    global args
+
+    parser = argparse.ArgumentParser(description="Make a new test file")
+    parser.add_argument(
+        "--debug",
+        "-D",
+        dest="logging_level",
+        action="store_const",
+        const=logging.DEBUG,
+        default=logging.INFO,
+        help="log debugging messages",
+    )
+    parser.add_argument(
+        "--quiet",
+        "-Q",
+        dest="logging_level",
+        action="store_const",
+        const=logging.WARN,
+        help="log warnings and error",
+    )
+    parser.add_argument(
+        "--force",
+        "-f",
+        action="store_const",
+        default=False,
+        const=True,
+        help="over-write file if it already exists (else warn and quit)",
+    )
+    parser.add_argument(
+        "name",
+        nargs="+",
+        type=str,
+        help="the name of the test, can be snake_case or separate words",
+    )
+    args = parser.parse_args()
+    init_log(args.logging_level)
+    main()
