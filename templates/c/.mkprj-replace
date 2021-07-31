@@ -1,1 +1,3 @@
 __SHORT_DESC__
+__AUTHOR__=$fullname
+__YEAR__=$date:%Y
