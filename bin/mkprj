@@ -167,6 +167,11 @@ substitutions () {
         s="${s/\$project/$pn}"
     fi
 
+    if [[ "$s" == *'$PROJECT_SNAKE'* ]]; then
+        t="$(echo "$pn" | tr 'a-z-' 'A-Z_')"
+        s="${s/\$PROJECT/$t}"
+    fi
+
     if [[ "$s" == *'$PROJECT'* ]]; then
         t="$(echo "$pn" | tr 'a-z' 'A-Z')"
         s="${s/\$PROJECT/$t}"
