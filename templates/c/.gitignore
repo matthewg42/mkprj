@@ -11,3 +11,4 @@ wifi.mk
 **/__pycache__
 api_keys.txt
 Makefile.apikeys
+.gdb_history
