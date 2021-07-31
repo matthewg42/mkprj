@@ -14,7 +14,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 $(TARGET) : $(OBJ)
-	$(CXX) -o $@ $(LFLAGS) $^
+	$(CXX) -o $@ $^ $(LFLAGS)
 
 $(BUILD_DIR)/%.o : %.cpp
 	$(CXX) -c -o $@ $(CFLAGS) $<
