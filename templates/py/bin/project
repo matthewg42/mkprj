@@ -8,39 +8,18 @@
 import os
 import sys
 import logging
+import click
 from __PY_LIB_NAME__ import log, init_log
 
-global args
 
-
-def main():
-    log.info("START")
+@click.command()
+@click.option('--debug', is_flag=True, help='Produce debugging output.')
+def main(debug):
+    init_log(logging.DEBUG if debug else logging.INFO)
+    log.info("Your code here.")
+    log.debug("Here be debugging output.")
 
 
 if __name__ == "__main__":
-    import argparse
-
-    global args
-    parser = argparse.ArgumentParser(
-        description="Make simple projects from simple templates",
-        # epilog="Text to appear after options"
-    )
-    parser.add_argument(
-        "--debug",
-        dest="logging_level",
-        action="store_const",
-        const=logging.DEBUG,
-        default=logging.INFO,
-        help="write debugging output in the log",
-    )
-    parser.add_argument(
-        "--quiet",
-        dest="logging_level",
-        action="store_const",
-        const=logging.WARNING,
-        help="write less output in the log (warnings & errors only)",
-    )
-    args = parser.parse_args()
-    init_log(args.logging_level)
     main()
 
