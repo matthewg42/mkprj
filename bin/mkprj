@@ -13,7 +13,8 @@ VERSION=0.0.3
 THISSCRIPT=${0##*/}
 THISSCRIPT_FULL="$0"
 DBLEV_S=${DBLEV_S:-0}
-MKPRJ_TEMPLATE_DIR="${MKPRJ_TEMPLATE_DIR:-$HOME/project/mkprj/templates}"
+OP="bad_usage"
+VERBOSE=0
 
 usage () {
     cat <<EOD
@@ -21,6 +22,8 @@ Usage:
     ${0##*/} -l             : list project templates
     ${0##*/} -L             : list project templates and content
     ${0##*/} template name  : make a project called "name" for specified template
+
+Set the environment variable MKPRJ_TEMPLATE_DIR to specify the location of templates.
 
 EOD
     exit ${1:-0}
@@ -39,11 +42,12 @@ main () {
             shift 2
             ;;
         -l)
-            list_templates
+            OP=list_templates
             shift
             ;;
         -L)
-            list_templates -v
+            VERBOSE=1
+            OP=list_templates
             shift
             ;;
         -h)
@@ -64,27 +68,50 @@ main () {
 
     db 3 "command line parsed, parameters now: $@"
 
-    if [ $# -ne 2 ]; then
-        usage 2
+    if [ $# -eq 2 ] && [ "$OP" = "bad_usage" ]; then
+        OP=make_project
     fi
 
-    make_project "$@"
+    [ -n "$MKPRJ_TEMPLATE_DIR" ] || find_template_dir
+
+    "$OP" "$@"
 
 }
 
+bad_usage () {
+    usage 2
+}
+
+find_template_dir () {
+    local d
+    local test_path="py/project.env"
+    db 3 "MKPRJ_TEMPLATE_DIR isn't set - going to look to see if we can find it..."
+    for d in "$PROJECT_HOME/mkprj/templates" "$HOME/project/mkprj/templates"; do
+        db 4 "looking for MKPRJ_TEMPLATE_DIR in $d ..."
+        if [ -e "$d/$test_path" ]; then
+            export MKPRJ_TEMPLATE_DIR="$d"
+            break
+        fi
+    done
+    if [ -n "$MKPRJ_TEMPLATE_DIR" ]; then
+        db 1 "Found MKPRJ_TEMPLATE_DIR=$MKPRJ_TEMPLATE_DIR"
+    else
+        db -1 "Could not find template dir.  Try setting MKPRJ_TEMPLATE_DIR env var."
+        exit 1
+    fi
+}
+
 list_templates () {
-    cd "$MKPRJ_TEMPLATE_DIR" || erex 4 "template directory not found"
-    case "$1" in
-    -v)
+    cd "$MKPRJ_TEMPLATE_DIR" || exit 1
+
+    if [ "$VERBOSE" -eq 1 ]; then
         for f in *; do 
             find "$f" -type f
             echo ""
         done
-        ;;
-    *)
+    else
         ls
-        ;;
-    esac
+    fi
     exit 0
 }
 
