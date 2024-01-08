@@ -23,7 +23,7 @@
 
 if [ ! -n "$MCS_DB_LEVEL" ]; then
 if [ -n "$MCS_DEBUG" ]; then
-    echo "mcs_debug.sh: init" 1>&2
+    echo "mcs_db.sh: init" 1>&2
 fi
 
 declare -A MCS_DB_DATA
@@ -43,25 +43,48 @@ declare MCS_DB_TS_FMT="%Y-%m-%dT%T%z"
 declare MCS_DB_NAME="${BASH_SOURCE[$((${#BASH_SOURCE[@]}-1))]}"
 MCS_DB_NAME="${MCS_DB_NAME##*/}"
 
-# db_setup [-c on|off|auto] [-f fileno] [-n name] [-t fmt] [level]
+# Configure debugging. It is not necessary to call this unless you want to 
+# alter the defaut debugging settings.
+#
+# Usage: db_setup [-c on|off|auto] [-f fileno] [-n name] [-t fmt] [level]
+# e.g.   db_setup -f 1 DB1
+# Example sets diagnostic output to go to stdout, at DB1 levels.
+#
+# Where:
+# -c option sets color mode. "auto" means color on if output file number is a tty
+# -f option specifies output file number. 1=stdout, 2=stderr
+# -n option specifies name of program displayed in diagnostic messages
+# -t option sets date(1) format string for timestamps.
+# level is debugging level name, e.g. DB1
 db_setup () {
     local opt
-    while getopts "f:c:t:" opt; do
+    while getopts ":f:c:n:t:" opt; do
         case "$opt" in
-            c) MCS_DB_COLOR="$OPTARG" ;;
-            f) MCS_DB_FILE_NO="$OPTARG" ;;
-            n) MCS_DB_NAME="$OPTARG" ;;
-            t) MCS_DB_TS_FMT="$OPTARG" ;;
-            *) echo "db_setup WARN: bad usage" 1>&2 ;;
+            c) 
+                MCS_DB_COLOR="$OPTARG" 
+                ;;
+            f) 
+                MCS_DB_FILE_NO="$OPTARG" 
+                ;;
+            n) 
+                MCS_DB_NAME="$OPTARG" 
+                ;;
+            t) 
+                MCS_DB_TS_FMT="$OPTARG" 
+                ;;
+            '?') 
+                echo "${FUNCNAME[0]} ERROR: invalid option: -$OPTARG" 1>&2 
+                return 1
+                ;;
+            :) 
+                echo "${FUNCNAME[0]} ERROR: option -$OPTARG should have an argument" 1>&2 
+                return 1
+                ;;
         esac
     done
     shift "$((OPTIND-1))"
-    local col
-    IFS=, read MCS_DB_LEVEL col < <(echo "${MCS_DB_DATA[${1:-INFO}]}")
-    if [ "$MCS_DB_LEVEL" -ne "$MCS_DB_LEVEL" ]; then  
-        # non-numeric 
-        echo "db_setup: WARN '$1' not a valid debug - defaulting to INFO" 1>&2
-        MCS_DB_LEVEL=0
+    if [ $# -ge 1 ]; then
+        db_set_level "$1"
     fi
 }
 
@@ -104,6 +127,33 @@ db () {
     if [ "$lev_num" -eq -3 ]; then
         exit 1
     fi
+}
+
+# Set current debugging level by name
+# Usage: db_set_level level
+# e.g.   db_set_level DB1
+db_set_level () {
+    local col
+    IFS=, read MCS_DB_LEVEL col < <(echo "${MCS_DB_DATA["$1"]}")
+    if [ "$MCS_DB_LEVEL" -ne "$MCS_DB_LEVEL" ]; then
+        # non-numeric 
+        echo "db_set_level: WARN '$1' not a valid diagnostic output level - defaulting to INFO" 1>&2
+        MCS_DB_LEVEL=0
+    fi
+}
+
+db_more () {
+    local level
+    local col
+    local name
+    for name in "${!MCS_DB_DATA[@]}"; do
+        IFS=, read level col < <(echo "${MCS_DB_DATA[$name]}")
+        if [ "$level" -eq $((MCS_DB_LEVEL+1)) ]; then
+            let MCS_DB_LEVEL+=1
+            return 0
+        fi
+    done
+    return 1
 }
 
 fi
