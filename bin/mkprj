@@ -182,7 +182,7 @@ substitutions () {
     fi
 
     if [[ "$s" == *'$fullname'* ]]; then
-        t="$(grep "^$(whoami):" /etc/passwd | cut -d: -f5)"
+        t="$(getent passwd $(whoami) | cut -d: -f5)"
         s="${s/\$fullname/$t}"
     fi
 
