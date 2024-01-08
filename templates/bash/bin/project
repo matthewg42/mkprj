@@ -1,5 +1,5 @@
 #!/bin/bash
 
-. mcs_debug.sh
+. mcs_db.sh
 
 db INFO "This is an info level message"
