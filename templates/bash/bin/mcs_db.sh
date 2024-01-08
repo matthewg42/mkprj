@@ -18,7 +18,7 @@
 #
 # mcs_db.sh - Mouse's Common Shell Debug Functions
 #
-# Source this from your bash/zsh scripts.
+# Source this from your bash scripts.
 #
 
 if [ ! -n "$MCS_DB_LEVEL" ]; then
