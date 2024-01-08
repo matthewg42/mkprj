@@ -1,5 +1,85 @@
 #!/bin/bash
 
-. mcs_db.sh
+PROG_NAME="__PROJECT_NAME__"
+PROG_VERSION="1.0.0"
+PROG_AUTHOR="__AUTHOR__"
+PROG_COPYRIGHT="Copyright (C) __YEAR__ $PROG_AUTHOR"
 
-db INFO "This is an info level message"
+. mcs_prog.sh
+
+main () {
+    local opt
+    opt=$(getopt -o Dh --long help,manual,version -- "$@") || db FATAL "Invalid usage. Try '$0 --help' or '$0 --manual'."
+    eval set -- "$opt"
+    while true; do
+        case "$1" in
+            -D)
+                db_more
+                shift
+                ;;
+            -h|--help)
+                usage_and_exit 0
+                ;;
+            --manual)
+                manual_and_exit 0
+                ;;
+            --version)
+                version_and_exit 0
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                db FATAL "bad option: $1"
+                ;;
+        esac
+    done
+    db DB1 "Arguments after options: $*"
+}
+
+main "$@"
+exit 0
+
+# Putting POD docs in a comment to prevent shellcheck freaking out.
+cat <<EOD > /dev/null
+=head1 NAME
+
+__PROJECT_NAME__ - __ONE_LINE_DESC__
+
+=head1 SYNOPSIS
+
+__PROJECT_NAME__ [options]
+
+=head1 DESCRIPTION
+
+TODO
+
+=head1 OPTIONS
+
+=over
+
+=item B<-D>
+
+Increase verbosity of diagnostic output to stderr (may be used multiple times).
+
+=item B<-h> or B<--help>
+
+Print usage information to stdout and exit.
+
+=item B<--manual>
+
+See full manual page for this program.
+
+=item B<--version>
+
+Print program version information to stdout and exit.
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (C) __YEAR__ __AUTHOR__.
+
+=cut
+EOD
