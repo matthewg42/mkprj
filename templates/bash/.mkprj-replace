@@ -1,0 +1,6 @@
+__PROJECT_NAME__=$project
+__AUTHOR__=$fullname
+__YEAR__=$date:%Y
+__PROJECT_PATH__=$projectdir
+__PROJECT_NAME_UPPER__=$PROJECT_SNAKE
+__ONE_LINE_DESC__
